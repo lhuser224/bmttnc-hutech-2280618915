@@ -2,8 +2,7 @@ from SinhVien import SinhVien
 
 class QuanLySinhVien:
     
-    def __init__(self):
-        self.listSinhVien = []
+    listSinhVien = []
     
     def generateID(self):
         maxId = 1
@@ -21,7 +20,7 @@ class QuanLySinhVien:
     def nhapSinhVien(self):
         svId = self.generateID()
         name = input("Nhập tên Sinh viên: ")
-        sex = input("Nhập giới tình sinh viên: ")
+        sex = input("Nhập giới tính sinh viên: ")
         major = input("Nhập chyên ngành của sinh viên: ")    
         diemTB = float(input("Nhập điểm của sinh viên: ")) 
         sv = SinhVien(svId, name, sex, major, diemTB)
@@ -32,7 +31,7 @@ class QuanLySinhVien:
         sv:SinhVien = self.findByID(ID)
         if( sv!= None):
             name = input("Nhập tên Sinh viên: ")
-            sex = input("Nhập giới tình sinh viên: ")
+            sex = input("Nhập giới tính sinh viên: ")
             major = input("Nhập chyên ngành của sinh viên: ")    
             diemTB = float(input("Nhập điểm của sinh viên: ")) 
             sv._name = name
