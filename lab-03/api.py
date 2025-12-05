@@ -1,9 +1,42 @@
 from flask import Flask, request, jsonify
 from cipher.rsa import RSACipher
+from cipher.ecc import ECCCipher
 import os
 
 app = Flask(__name__)
 rsa_cipher = RSACipher()
+ecc_cipher = ECCCipher()
+
+@app.route('/api/ecc/generate_keys', methods=['GET'])
+def generate_ecc_keys():
+    ecc_cipher.generate_keys()
+    return jsonify({'message': 'Keys generated successfully'})
+
+@app.route('/api/ecc/sign', methods=['POST'])
+def sign_message():
+    data = request.json
+    if 'message' not in data:
+        return jsonify({'error': 'Missing "message" in request body'}), 400        
+    message = data['message']    
+    private_key, _ = ecc_cipher.load_keys()    
+    signature_bytes = ecc_cipher.sign(message, private_key)    
+    signature_hex = signature_bytes.hex()    
+    return jsonify({'signature': signature_hex})
+
+@app.route('/api/ecc/verify', methods=['POST'])
+def verify_signature():
+    data = request.json    
+    if 'message' not in data or 'signature' not in data:
+        return jsonify({'error': 'Missing "message" or "signature" in request body'}), 400        
+    message = data['message']
+    signature_hex = data['signature']    
+    _, public_key = ecc_cipher.load_keys()    
+    try:
+        signature_bytes = bytes.fromhex(signature_hex)
+    except ValueError:
+        return jsonify({'error': 'Invalid signature hex format'}), 400        
+    is_verified = ecc_cipher.verify(message, signature_bytes, public_key)    
+    return jsonify({'is_verified': is_verified})
 
 @app.route('/api/rsa/generate_keys', methods=['GET'])
 def rsa_generate_keys():
